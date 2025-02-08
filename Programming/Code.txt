@@ -157,7 +157,7 @@ void sortCDsByArtist(struct CD** head) {
 
     struct CD* sorted = NULL; // Начало отсортированного списка  
     struct CD* current = *head; // Текущий элемент для сортировки  
-
+	// Если current не NULL!
     while (current != NULL) {  
         struct CD* next = current->next; // Запоминаем следующий элемент  
 
