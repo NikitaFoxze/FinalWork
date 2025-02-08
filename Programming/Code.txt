@@ -1,0 +1,218 @@
+﻿#define _CRT_SECURE_NO_WARNINGS
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <locale.h>
+
+// Структура для хранения данных одного компакт-диска
+struct CD {
+    char title[50];     // Название диска
+    char artist[50];    // Исполнитель
+    struct {
+        int tracks;         // Количество треков
+        int year;           // Год выпуска
+        char mounth[50];    // Месяц выпуска
+    } CD;
+    struct CD* next;    // Указатель на следующий элемент списка
+};
+
+// Структура для хранения шапки таблицы
+struct HEAD {
+    char name1[50];
+    char name2[50];
+    char name3[50];
+    struct {
+        char name4[50];
+        char name5[50];
+        char name6[50];
+    } HEAD;
+};
+
+// Функция для вывода таблицы
+void printTable(struct HEAD heads, struct CD* head) {
+    // Заголовок таблицы
+    printf("\
+| %-10s | %-10s | %-5s | %-10s |\n\
+                                 | %-5s | %-5s  |\n",
+        heads.name1, heads.name2, heads.name3, heads.HEAD.name4, heads.HEAD.name5, heads.HEAD.name6);
+    printf("-------------------------------------------------------------\n");
+
+    // Вывод данных из списка
+    struct CD* current = head;
+    while (current != NULL) {
+        printf("| %-10s | %-10s | %-5d | %-5d | %-5s |\n", current->title, current->artist, current->CD.tracks, current->CD.year, current->CD.mounth);
+        printf("-------------------------------------------------------------\n");
+        current = current->next;
+    }
+}
+
+// Функция для ввода шапки таблицы
+void inputHeads(struct HEAD* heads) {
+    printf("Введите шапку для таблицы:\n");
+    printf("Первая ячейка: ");
+    scanf(" %[^\n]", heads->name1);
+    printf("Вторая ячейка: ");
+    scanf(" %[^\n]", heads->name2);
+    printf("Третья ячейка: ");
+    scanf(" %[^\n]", heads->name3);
+    printf("Четвёртая ячейка: ");
+    scanf(" %[^\n]", heads->HEAD.name4);
+    printf("Пятая ячейка: ");
+    scanf(" %[^\n]", heads->HEAD.name5);
+    printf("Шестая ячейка: ");
+    scanf(" %[^\n]", heads->HEAD.name6);
+}
+
+// Функция для ввода данных о компакт-дисках в динамический список
+struct CD* inputCDs() {
+    struct CD* head = NULL;  // Начало списка
+    struct CD* tail = NULL;  // Конец списка (для добавления элементов)
+
+    while (1) {
+        // Создаём новый элемент списка
+        struct CD* newCD = (struct CD*)malloc(sizeof(struct CD));
+        if (newCD == NULL) {
+            printf("Ошибка выделения памяти.\n");
+            exit(1);
+        }
+
+        printf("\nВведите данные для нового диска:\n");
+        printf("Название (или '#' для завершения): ");
+        scanf(" %[^\n]", newCD->title);
+
+        // Завершаем ввод, если введен специальный символ '*'
+        if (newCD->title[0] == '#') {
+            free(newCD);
+            break;
+        }
+
+        printf("Исполнитель: ");
+        scanf(" %[^\n]", newCD->artist);
+        printf("Количество треков: ");
+        scanf("%d", &newCD->CD.tracks);
+        printf("Год выпуска: ");
+        scanf("%d", &newCD->CD.year);
+        printf("Месяц выпуска: ");
+        scanf(" %[^\n]", newCD->CD.mounth);
+
+        newCD->next = NULL;  // Указатель на следующий элемент
+
+        // Добавляем новый элемент в список
+        if (head == NULL) {
+            head = newCD;  // Если список пустой, новый элемент становится началом
+        }
+        else {
+            tail->next = newCD;  // Иначе, добавляем элемент в конец
+        }
+        tail = newCD;  // Перемещаем указатель конца списка на новый элемент
+
+        // Запрашиваем продолжение ввода
+        char continueInput;
+        printf("Хотите ввести еще один диск? (y/n): ");
+        scanf(" %c", &continueInput);
+        if (continueInput == 'n' || continueInput == 'N') {
+            break;
+        }
+    }
+
+    return head;
+}
+
+// Функция для перестановки первого и последнего элемента списка
+/*
+void swapRows(struct CD** head) {
+    if (*head == NULL || (*head)->next == NULL) {
+        return;  // Если список пустой или содержит только один элемент, перестановка не нужна
+    }
+
+    struct CD* first = *head;
+    struct CD* last = *head;
+    struct CD* prevLast = NULL;
+
+    // Найдем последний элемент и его предыдущий элемент
+    while (last->next != NULL) {
+        prevLast = last;
+        last = last->next;
+    }
+
+    // Если первый и последний элементы не одинаковы, меняем их местами
+    if (first != last) {
+        // Изменяем указатели
+        prevLast->next = first;
+        last->next = first->next;
+        first->next = NULL;
+
+        // Меняем указатель на начало списка
+        *head = last;
+    }
+}
+*/
+
+// Задание
+void sortCDsByArtist(struct CD** head) {
+    if (*head == NULL || (*head)->next == NULL) {  
+        return;  // Если список пустой или содержит только один элемент, ничего не делаем  
+    }  
+
+    struct CD* sorted = NULL; // Начало отсортированного списка  
+    struct CD* current = *head; // Текущий элемент для сортировки  
+
+    while (current != NULL) {  
+        struct CD* next = current->next; // Запоминаем следующий элемент  
+
+        // Вставляем current в отсортированный список  
+        if (sorted == NULL || strcmp(current->artist, sorted->artist) < 0) {  
+            // Вставляем в начало отсортированного списка  
+            current->next = sorted;  
+            sorted = current;  
+        } else {  
+            // Находим правильное место для вставки  
+            struct CD* temp = sorted;  
+            while (temp->next != NULL && strcmp(current->artist, temp->next->artist) >= 0) {  
+                temp = temp->next;  
+            }  
+            current->next = temp->next; // Вставляем текущий элемент  
+            temp->next = current;  
+        }  
+
+        current = next; // Переходим к следующему элементу  
+    }  
+
+    *head = sorted; // Обновляем голову списка 
+}
+
+// Главная функция
+int main() {
+    setlocale(LC_ALL, "Russian");
+
+    struct HEAD heads;  // Шапка таблицы
+    inputHeads(&heads);  // Ввод шапки таблицы
+
+    // Ввод списка компакт-дисков
+    struct CD* head = inputCDs();
+
+    // Вывод исходной таблицы
+    printf("\nИсходные данные:\n");
+    printTable(heads, head);
+
+    // Перестановка первого и последнего элемента списка
+    //swapRows(&head);
+
+    // Задание
+    sortCDsByArtist(&head);
+    
+    // Вывод модифицированного списка
+    printf("\nДанные после перестановки:\n");
+    printTable(heads, head);
+
+    // Освобождаем память
+    struct CD* current = head;
+    while (current != NULL) {
+        struct CD* temp = current;
+        current = current->next;
+        free(temp);
+    }
+
+    return 0;
+}
