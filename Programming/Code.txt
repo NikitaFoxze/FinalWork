@@ -67,7 +67,7 @@ void inputHeads(struct HEAD* heads) {
 // Функция для ввода данных о компакт-дисках в динамический список
 struct CD* inputCDs() {
     struct CD* head = NULL;  // Начало списка
-    struct CD* tail = NULL;  // Конец списка (для добавления элементов)
+	struct CD* tail = NULL;  // Конец списка (для добавления элементов)
 
     while (1) {
         // Создаём новый элемент списка
@@ -116,7 +116,7 @@ struct CD* inputCDs() {
         }
     }
 
-    return head;
+    return head; // Возвращает head
 }
 
 // Функция для перестановки первого и последнего элемента списка
@@ -126,9 +126,9 @@ void swapRows(struct CD** head) {
         return;  // Если список пустой или содержит только один элемент, перестановка не нужна
     }
 
-    struct CD* first = *head;
-    struct CD* last = *head;
-    struct CD* prevLast = NULL;
+    	struct CD* first = *head;
+   	struct CD* last = *head;
+    	struct CD* prevLast = NULL;
 
     // Найдем последний элемент и его предыдущий элемент
     while (last->next != NULL) {
