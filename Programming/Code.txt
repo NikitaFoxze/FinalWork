@@ -7,10 +7,10 @@
 
 // Структура для хранения данных одного компакт-диска
 struct CD {
-    char title[50];     // Название диска
-    char artist[50];    // Исполнитель
+    char stitle[50];     // Название диска
+    char sartist[50];    // Исполнитель
     struct {
-        int tracks;         // Количество треков
+        int stracks;         // Количество треков
         int year;           // Год выпуска
         char mounth[50];    // Месяц выпуска
     } CD;
@@ -139,9 +139,9 @@ void swapRows(struct CD** head) {
     // Если первый и последний элементы не одинаковы, меняем их местами
     if (first != last) {
         // Изменяем указатели
-        prevLasts->next = first;
-        lasts->next = first->next;
-        firsts->next = NULL;
+        prevLast->next = first;
+        last->next = first->next;
+        first->next = NULL;
 
         // Меняем указатель на начало списка
         *head = last;
